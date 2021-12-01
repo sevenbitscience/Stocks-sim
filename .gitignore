@@ -16,3 +16,6 @@
 
 # Support for Project snippet scope
 !.vscode/*.code-snippets
+
+# Python Virtual Enviroment
+.venv/
