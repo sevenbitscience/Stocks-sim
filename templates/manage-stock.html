@@ -1,0 +1,12 @@
+<!doctype html>
+<title>Hello</title>
+{% if submitted == true %}
+    <h1>Done!</h1>
+{% else %}
+    <h1>Managing {{ name }}!</h1>
+        <form action="/manage-stock" method = "POST">
+        <p>Stock <input type = "text" name = "stock_name" /></p>
+        <p>Price <input type = "text" name = "price" /></p>
+        <p><input type = "submit" value = "submit" /></p>
+    </form>
+{% endif %}
