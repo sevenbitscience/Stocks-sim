@@ -1,4 +1,5 @@
 from flask import Flask, render_template, g, request
+import click
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, DateTime, insert
 from datetime import datetime
 
@@ -15,20 +16,16 @@ metadata_obj.create_all(engine)
 def hello_world():
     return "<p>Hello, World!</p>"
 
-@app.route("/view/<stock>")
-def stock(stock=None):
-    s = select(stock_table).where(stock_table.c.Name == stock)
+@app.route("/view/<stockname>")
+def stock(stockname=None):
+    s = select(stock_table).where(stock_table.c.Name == stockname)
     conn = engine.connect()
     cost = conn.execute(s).fetchall()[0][1]
-    return render_template('stock.html', name=stock, cost=cost)
+    return render_template('stock.html', name=stockname, cost=cost)
 
-@app.route("/manage-stock", methods=["GET", "POST"])
-def manage_stock():
-    if request.method == 'POST':
-        stock = request.form.get("stock_name")
-        price = request.form.get("price")
-        with engine.connect() as conn:
-            result = conn.execute(insert(stock_table),[{"Name": stock, "Price": price, "Datetime": datetime.now()}])
-            conn.commit()
-        return render_template("manage-stock.html", name=stock, submitted=True)
-    return render_template("manage-stock.html", submitted=False)
+@click.command()
+@click.argument('name', 'price')
+def create_stock(name, price = 0):
+    with engine.connect() as conn:
+        result = conn.execute(insert(stock_table),[{"Name": name, "Price": price, "Datetime": datetime.now()}])
+        conn.commit()
